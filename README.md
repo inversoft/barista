@@ -25,7 +25,9 @@ ClientResponse<Nodes, Void> response = client.getNodes();
 // Retrieve a Node by Name, print the node name if request was successfull
 ClientResponse<Nodes, Void> response = client.getNode("fooBar");
 if (response.wasSuccessful()) {
-  System.out.printf(response.successResponse.name); // --> fooBar
+  System.out.println(response.successResponse.name); // --> fooBar
+} else {
+  System.out.println("Request failed. Status code : [" + response.status + "]);
 }
 ```
 
