@@ -27,7 +27,7 @@ ClientResponse<Nodes, Void> response = client.getNode("fooBar");
 if (response.wasSuccessful()) {
   System.out.println(response.successResponse.name); // --> fooBar
 } else {
-  System.out.println("Request failed. Status code : [" + response.status + "]);
+  System.out.println("Request failed. Status code : [" + response.status + "]");
 }
 ```
 
