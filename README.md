@@ -1,0 +1,46 @@
+## Barista - Chef Java Client ![semver 2.0.0 compliant](http://img.shields.io/badge/semver-2.0.0-brightgreen.svg?style=flat-square)
+
+Java 8 Chef Java Client written using [Restify](https://github.com/inversoft/restify) REST Client.
+
+I'm currently only adding methods that I'm using, so open an issue if you'd like a method added, or feel free to submit a pull request.
+
+### Code Examples
+```java
+// Construct a new Chef Client
+ChefClient client = new ChefClient(
+    "vandelay",                      // userId used in header X-Ops-UserId
+    "https://chef.acme.com",         // Server URL
+    "vandelayIndustries",            // Organization Name
+    "/usr/local/acme/vandelay.pem"); // Path to PEM file
+
+// Retrieve All Nodes
+ClientResponse<Nodes, Void> response = client.getNodes();
+
+// Retrieve Node by Name
+ClientResponse<Nodes, Void> response = client.getNode("node-name");
+
+// Delete a Node by Name
+ClientResponse<Void, Void> response = client.deleteNode("node-name");
+
+// Delete a Client by Name
+ClientResponse<Void, Void> response = client.deleteClient("client-name");
+```
+
+### Building
+**Note:** This project uses the Savant build tool. To compile using using Savant, follow these instructions:
+
+```bash
+$ mkdir ~/savant
+$ cd ~/savant
+$ wget http://savant.inversoft.org/org/savantbuild/savant-core/1.0.0/savant-1.0.0.tar.gz
+$ tar xvfz savant-1.0.0.tar.gz
+$ ln -s ./savant-1.0.0 current
+$ export PATH=$PATH:~/savant/current/bin/
+```
+
+Then, perform an integration build of the project by running:
+```bash
+$ sb int
+```
+
+For more information, checkout [savantbuild.org](http://savantbuild.org/).
