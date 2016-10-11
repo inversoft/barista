@@ -13,17 +13,20 @@ ChefClient client = new ChefClient(
     "vandelayIndustries",            // Organization Name
     "/usr/local/acme/vandelay.pem"); // Path to PEM file
 
-// Retrieve All Nodes
-ClientResponse<Nodes, Void> response = client.getNodes();
-
-// Retrieve Node by Name
-ClientResponse<Nodes, Void> response = client.getNode("node-name");
-
 // Delete a Node by Name
 ClientResponse<Void, Void> response = client.deleteNode("node-name");
 
 // Delete a Client by Name
 ClientResponse<Void, Void> response = client.deleteClient("client-name");
+
+// Retrieve All Nodes
+ClientResponse<Nodes, Void> response = client.getNodes();
+
+// Retrieve a Node by Name, print the node name if request was successfull
+ClientResponse<Nodes, Void> response = client.getNode("fooBar");
+if (response.wasSuccessful()) {
+  System.out.printf(response.successResponse.name); // --> fooBar
+}
 ```
 
 ### Building
