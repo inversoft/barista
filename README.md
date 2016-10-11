@@ -1,6 +1,6 @@
 ## Barista - Chef Java Client ![semver 2.0.0 compliant](http://img.shields.io/badge/semver-2.0.0-brightgreen.svg?style=flat-square)
 
-Java 8 Chef Java Client written using [Restify](https://github.com/inversoft/restify) REST Client.
+Java 8 [Chef](https://www.chef.io/chef/) Java Client written using [Restify](https://github.com/inversoft/restify) REST Client
 
 I'm currently only adding methods that I'm using, so open an issue if you'd like a method added, or feel free to submit a pull request.
 
