@@ -23,7 +23,7 @@ ClientResponse<Void, Void> response = client.deleteClient("client-name");
 ClientResponse<Nodes, Void> response = client.getNodes();
 
 // Retrieve a Node by Name, print the node name if successful, else print the status code.
-ClientResponse<Nodes, Void> response = client.getNode("fooBar");
+ClientResponse<Node, Void> response = client.getNode("fooBar");
 if (response.wasSuccessful()) {
   System.out.println(response.successResponse.name); // --> fooBar
 } else {
