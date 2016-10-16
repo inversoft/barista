@@ -20,6 +20,8 @@ import com.inversoft.chef.domain.Nodes;
 import com.inversoft.rest.ClientResponse;
 import org.testng.annotations.Test;
 
+import static org.testng.Assert.assertEquals;
+
 /**
  * @author Daniel DeGroff
  */
@@ -29,6 +31,6 @@ public class ChefClientTest {
   public void test() throws Exception {
     ChefClient client = new ChefClient("userId", "https://chef.example.com", "organization", "/usr/local/path/to/pem/userId.pem");
     ClientResponse<Nodes, Void> response = client.getNodes();
-    assert (response.wasSuccessful());
+    assertEquals(response.status, 200);
   }
 }

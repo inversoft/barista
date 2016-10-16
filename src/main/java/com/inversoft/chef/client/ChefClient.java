@@ -45,7 +45,7 @@ import java.util.stream.IntStream;
 public class ChefClient {
   private final String baseURL;
 
-  private final String pemPath;
+  private final String privateKey;
 
   private final String userId;
 
@@ -69,7 +69,7 @@ public class ChefClient {
     this.userId = userId;
     this.baseURL = baseURL;
     this.organization = organization;
-    this.pemPath = pemPath;
+    this.privateKey = getPrivateKey(pemPath);
   }
 
   /**
@@ -86,7 +86,15 @@ public class ChefClient {
     this.baseURL = baseURL;
     this.organization = organization;
     this.chefVersion = chefVersion;
-    this.pemPath = pemPath;
+    this.privateKey = getPrivateKey(pemPath);
+  }
+
+  private String getPrivateKey(String pemPath) {
+    try {
+      return new String(Files.readAllBytes(Paths.get(pemPath)));
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   /**
@@ -211,7 +219,6 @@ public class ChefClient {
    */
   private String rsaSignature(String string) {
     try {
-      String privateKey = new String(Files.readAllBytes(Paths.get(pemPath)));
       return SSLTools.signWithRSA(string, privateKey);
     } catch (GeneralSecurityException | IOException e) {
       throw new RuntimeException(e);
