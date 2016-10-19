@@ -2,7 +2,7 @@
 
 Java 8 [Chef](https://www.chef.io/chef/) Java Client written using [Restify](https://github.com/inversoft/restify) REST Client
 
-I've only adding methods that I'm using, open an issue if you'd like a method added, or feel free to submit a pull request, the pattern should be very easy to follow.
+I've only added methods that I'm using, open an issue if you'd like a method added, or feel free to submit a pull request, the pattern should be very easy to follow.
 
 ### Code Examples
 ```java
