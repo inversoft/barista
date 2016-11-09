@@ -26,11 +26,10 @@ import static org.testng.Assert.assertEquals;
  * @author Daniel DeGroff
  */
 public class ChefClientTest {
-
   @Test(enabled = false)
   public void test() throws Exception {
-    ChefClient client = new ChefClient("userId", "https://chef.example.com", "organization", "/usr/local/path/to/pem/userId.pem");
-    ClientResponse<Nodes, Void> response = client.getNodes();
+    ChefClient client = new ChefClient("userId", "https://chef.example.com", "organization", "/usr/local/path/to/pem/userId.pem", null, null);
+    ClientResponse<Nodes, Void> response = client.retrieveNodes();
     assertEquals(response.status, 200);
   }
 }

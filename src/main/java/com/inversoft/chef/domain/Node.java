@@ -31,7 +31,7 @@ import java.util.Map;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Node {
-  public Map<String, String> attributes = new LinkedHashMap<>();
+  public Map<String, Object> attributes = new LinkedHashMap<>();
 
   @JsonProperty("chef_environment")
   public String chefEnvironment;
@@ -39,14 +39,22 @@ public class Node {
   @JsonProperty("chef_type")
   public ChefType chefType;
 
-  public Map<String, String> defaults = new LinkedHashMap<>();
+  public Map<String, Object> defaults = new LinkedHashMap<>();
 
   @JsonProperty("json_class")
   public String jsonClass = "Chef::Node";
 
   public String name;
 
-  public Map<String, String> overrides = new LinkedHashMap<>();
+  public Map<String, Object> normal = new LinkedHashMap<>();
+
+  public Map<String, Object> overrides = new LinkedHashMap<>();
+
+  @JsonProperty("policy_group")
+  public String policyGroup;
+
+  @JsonProperty("policy_name")
+  public String policyName;
 
   @JsonProperty("run_list")
   public List<String> runList = new ArrayList<>();

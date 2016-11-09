@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.IntStream;
 
 /**
@@ -45,7 +46,13 @@ import java.util.stream.IntStream;
 public class ChefClient {
   private final String baseURL;
 
+  private final Consumer<ClientResponse<?, Void>> errorConsumer;
+
+  private final String organization;
+
   private final String privateKey;
+
+  private final Function<ClientResponse<?, Void>, ?> successFunction;
 
   private final String userId;
 
@@ -55,68 +62,53 @@ public class ChefClient {
 
   public int readTimeout = 2000;
 
-  private String organization;
-
   /**
    * Construct a new ChefClient.
    *
-   * @param userId       User name correspond to the pem key
-   * @param baseURL      Chef api server address
-   * @param organization Chef organization
-   * @param pemPath      Path of the pem key
+   * @param userId          User name correspond to the pem key
+   * @param baseURL         Chef api server address
+   * @param organization    Chef organization
+   * @param pemPath         Path of the pem key
+   * @param successFunction The success function that is used for the dollar-sign methods.
+   * @param errorConsumer   The error consumer that is used for the dollar-sign methods.
    */
-  public ChefClient(String userId, String baseURL, String organization, String pemPath) {
+  public ChefClient(String userId, String baseURL, String organization, String pemPath,
+                    Function<ClientResponse<?, Void>, ?> successFunction, Consumer<ClientResponse<?, Void>> errorConsumer) {
     this.userId = userId;
     this.baseURL = baseURL;
     this.organization = organization;
     this.privateKey = getPrivateKey(pemPath);
+    this.successFunction = successFunction;
+    this.errorConsumer = errorConsumer;
   }
 
   /**
    * Construct a new ChefClient.
    *
-   * @param userId       User name correspond to the pem key
-   * @param baseURL      Chef api server address
-   * @param organization Chef organization
-   * @param chefVersion  Chef API version
-   * @param pemPath      Oath of the pem key
+   * @param userId          User name correspond to the pem key
+   * @param baseURL         Chef api server address
+   * @param organization    Chef organization
+   * @param chefVersion     Chef API version
+   * @param pemPath         Oath of the pem key
+   * @param successFunction The success function that is used for the dollar-sign methods.
+   * @param errorConsumer   The error consumer that is used for the dollar-sign methods.
    */
-  public ChefClient(String userId, String baseURL, String organization, String chefVersion, String pemPath) {
+  public ChefClient(String userId, String baseURL, String organization, String chefVersion, String pemPath,
+                    Function<ClientResponse<?, Void>, ?> successFunction, Consumer<ClientResponse<?, Void>> errorConsumer) {
     this.userId = userId;
     this.baseURL = baseURL;
     this.organization = organization;
     this.chefVersion = chefVersion;
     this.privateKey = getPrivateKey(pemPath);
-  }
-
-  private String getPrivateKey(String pemPath) {
-    try {
-      return new String(Files.readAllBytes(Paths.get(pemPath)));
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
-  }
-
-  /**
-   * Delete a Chef Node.
-   *
-   * @param name The name of the chef node to delete.
-   * @return the client response.
-   */
-  public ClientResponse<Void, Void> deleteNode(String name) {
-    return start(client ->
-        client.urlSegment("organizations")
-              .urlSegment(organization)
-              .urlSegment("clients")
-              .urlSegment(name)
-              .delete());
+    this.successFunction = successFunction;
+    this.errorConsumer = errorConsumer;
   }
 
   /**
    * Delete a Chef Client.
    *
    * @param name The name of the chef client to delete.
-   * @return the client response.
+   * @return The client response that contains the status code, the response body and/or any exceptions that occurred.
    */
   public ClientResponse<Void, Void> deleteClient(String name) {
     return start(client ->
@@ -128,16 +120,51 @@ public class ChefClient {
   }
 
   /**
-   * Retrieve all Chef Nodes in the organization.
+   * Delete a Chef Client.
    *
-   * @return the client response.
+   * @param name The name of the chef client to delete.
    */
-  public ClientResponse<Nodes, Void> getNodes() {
-    return start(Nodes.class, client ->
+  public void deleteClient$(String name) {
+    handleVoid(deleteClient(name));
+  }
+
+  /**
+   * Delete a Chef Node.
+   *
+   * @param name The name of the chef node to delete.
+   * @return The client response that contains the status code, the response body and/or any exceptions that occurred.
+   */
+  public ClientResponse<Void, Void> deleteNode(String name) {
+    return start(client ->
+        client.urlSegment("organizations")
+              .urlSegment(organization)
+              .urlSegment("clients")
+              .urlSegment(name)
+              .delete());
+  }
+
+  /**
+   * Delete a Chef Node.
+   *
+   * @param name The name of the chef node to delete.
+   */
+  public void deleteNode$(String name) {
+    handleVoid(deleteNode(name));
+  }
+
+  /**
+   * Retrieve a Chef Node.
+   *
+   * @param name The name of the chef node to retrieve.
+   * @return The client response that contains the status code, the response body and/or any exceptions that occurred.
+   */
+  public ClientResponse<Node, Void> retrieveNode(String name) {
+    return start(Node.class, client ->
         client.urlSegment("organizations")
               .urlSegment(organization)
               .urlSegment("nodes")
-              .successResponseHandler(new JSONResponseHandler(Nodes.class))
+              .urlSegment(name)
+              .successResponseHandler(new JSONResponseHandler<>(Node.class))
               .get());
   }
 
@@ -145,70 +172,87 @@ public class ChefClient {
    * Retrieve a Chef Node.
    *
    * @param name The name of the chef node to retrieve.
-   * @return the client response.
+   * @return The node.
    */
-  public ClientResponse<Node, Void> getNode(String name) {
-    return start(Node.class, client ->
+  public Node retrieveNode$(String name) {
+    return handle(retrieveNode(name));
+  }
+
+  /**
+   * Retrieve all Chef Nodes in the organization.
+   *
+   * @return The client response that contains the status code, the response body and/or any exceptions that occurred.
+   */
+  public ClientResponse<Nodes, Void> retrieveNodes() {
+    return start(Nodes.class, client ->
         client.urlSegment("organizations")
               .urlSegment(organization)
               .urlSegment("nodes")
-              .urlSegment(name)
-              .successResponseHandler(new JSONResponseHandler(Node.class))
+              .successResponseHandler(new JSONResponseHandler<>(Nodes.class))
               .get());
+  }
+
+  /**
+   * Retrieve all Chef Nodes in the organization.
+   *
+   * @return The nodes.
+   */
+  public Nodes retrieveNodes$() {
+    return handle(retrieveNodes());
   }
 
   /**
    * Update a Chef Node.
    *
    * @param name    The name of the chef node to updated.
-   * @param request The request object to be serialized for the JSON body.
-   * @return the client response.
+   * @param node TThe new node.
+   * @return The client response that contains the status code, the response body and/or any exceptions that occurred.
    */
-  public ClientResponse<Node, Void> updateNode(String name, Node request) {
+  public ClientResponse<Node, Void> updateNode(String name, Node node) {
     return start(Node.class, client ->
         client.urlSegment("organizations")
               .urlSegment(organization)
               .urlSegment("nodes")
               .urlSegment(name)
-              .bodyHandler(new JSONBodyHandler(request))
+              .bodyHandler(new JSONBodyHandler(node))
               .put());
   }
 
-  private <T> ClientResponse<T, Void> start(Class<T> type, Consumer<RESTClient<T, Void>> consumer) {
-    RESTClient<T, Void> client = new RESTClient<>(type, Void.TYPE)
-        .url(this.baseURL)
-        .connectTimeout(connectTimeout)
-        .readTimeout(readTimeout);
+  /**
+   * Update a Chef Node.
+   *
+   * @param name    The name of the chef node to updated.
+   * @param node The new node.
+   * @return The updated node.
+   */
+  public Node updateNode$(String name, Node node) {
+    return handle(updateNode(name, node));
+  }
 
-    consumer.accept(client);
+  private String getPrivateKey(String pemPath) {
+    try {
+      return new String(Files.readAllBytes(Paths.get(pemPath)));
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
 
-    String contentHash = sha1Base64Encode(client.bodyHandler != null ? client.bodyHandler.getBody() : new byte[]{});
-    String timeStamp = ZonedDateTime.now(ZoneOffset.UTC).format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'"));
+  private <T> T handle(ClientResponse<T, Void> response) {
+    if (response.wasSuccessful() && successFunction != null) {
+      return (T) successFunction.apply(response);
+    } else if (!response.wasSuccessful() && errorConsumer != null) {
+      errorConsumer.accept(response);
+    }
 
-    client.header("Accept", "application/json");
-    client.header("X-Ops-Content-Hash", contentHash);
-    client.header("X-Ops-Sign", "version=1.0");
-    client.header("X-Ops-Timestamp", timeStamp);
-    client.header("X-Ops-UserId", userId);
-    client.header("X-Chef-Version", chefVersion);
+    return null;
+  }
 
-    String uriPath = client.getURI().getPath();
-    String hashedPath = sha1Base64Encode(uriPath.getBytes());
-
-    // Signed Headers
-    StringBuilder sb = new StringBuilder()
-        .append("Method:").append(client.method.name()).append("\n")
-        .append("Hashed Path:").append(hashedPath).append("\n")
-        .append("X-Ops-Content-Hash:").append(contentHash).append("\n")
-        .append("X-Ops-Timestamp:").append(timeStamp).append("\n")
-        .append("X-Ops-UserId:").append(userId);
-
-    String signedString = rsaSignature(sb.toString());
-    List<String> authorizationHeaders = splitAtLength(signedString, 60);
-    IntStream.range(0, authorizationHeaders.size()).forEach(index ->
-        client.header("X-Ops-Authorization-" + (index + 1), authorizationHeaders.get(index)));
-
-    return client.go();
+  private void handleVoid(ClientResponse<Void, Void> response) {
+    if (response.wasSuccessful() && successFunction != null) {
+      successFunction.apply(response);
+    } else if (!response.wasSuccessful() && errorConsumer != null) {
+      errorConsumer.accept(response);
+    }
   }
 
   /**
@@ -223,10 +267,6 @@ public class ChefClient {
     } catch (GeneralSecurityException | IOException e) {
       throw new RuntimeException(e);
     }
-  }
-
-  private ClientResponse<Void, Void> start(Consumer<RESTClient<Void, Void>> consumer) {
-    return start(Void.TYPE, consumer);
   }
 
   /**
@@ -260,5 +300,45 @@ public class ChefClient {
     }
 
     return strings;
+  }
+
+  private <T> ClientResponse<T, Void> start(Class<T> type, Consumer<RESTClient<T, Void>> consumer) {
+    RESTClient<T, Void> client = new RESTClient<>(type, Void.TYPE)
+        .url(this.baseURL)
+        .connectTimeout(connectTimeout)
+        .readTimeout(readTimeout);
+
+    consumer.accept(client);
+
+    String contentHash = sha1Base64Encode(client.bodyHandler != null ? client.bodyHandler.getBody() : new byte[]{});
+    String timeStamp = ZonedDateTime.now(ZoneOffset.UTC).format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'"));
+
+    client.header("Accept", "application/json");
+    client.header("X-Ops-Content-Hash", contentHash);
+    client.header("X-Ops-Sign", "version=1.0");
+    client.header("X-Ops-Timestamp", timeStamp);
+    client.header("X-Ops-UserId", userId);
+    client.header("X-Chef-Version", chefVersion);
+
+    String uriPath = client.getURI().getPath();
+    String hashedPath = sha1Base64Encode(uriPath.getBytes());
+
+    // Signed Headers
+    String sb = "Method:" + client.method.name() + "\n" +
+        "Hashed Path:" + hashedPath + "\n" +
+        "X-Ops-Content-Hash:" + contentHash + "\n" +
+        "X-Ops-Timestamp:" + timeStamp + "\n" +
+        "X-Ops-UserId:" + userId;
+
+    String signedString = rsaSignature(sb);
+    List<String> authorizationHeaders = splitAtLength(signedString, 60);
+    IntStream.range(0, authorizationHeaders.size()).forEach(index ->
+        client.header("X-Ops-Authorization-" + (index + 1), authorizationHeaders.get(index)));
+
+    return client.go();
+  }
+
+  private ClientResponse<Void, Void> start(Consumer<RESTClient<Void, Void>> consumer) {
+    return start(Void.TYPE, consumer);
   }
 }
