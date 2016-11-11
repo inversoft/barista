@@ -1,2 +1,4 @@
 *.iws
 build
+config.properties
+cacerts

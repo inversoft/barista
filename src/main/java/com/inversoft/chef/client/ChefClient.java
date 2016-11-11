@@ -65,10 +65,10 @@ public class ChefClient {
   /**
    * Construct a new ChefClient.
    *
-   * @param userId          User name correspond to the pem key
-   * @param baseURL         Chef api server address
-   * @param organization    Chef organization
-   * @param pemPath         Path of the pem key
+   * @param userId          User name correspond to the PEM key.
+   * @param baseURL         Chef API server address.
+   * @param organization    Chef organization.
+   * @param pemPath         Path of the PEM key.
    * @param successFunction The success function that is used for the dollar-sign methods.
    * @param errorConsumer   The error consumer that is used for the dollar-sign methods.
    */
@@ -85,11 +85,11 @@ public class ChefClient {
   /**
    * Construct a new ChefClient.
    *
-   * @param userId          User name correspond to the pem key
-   * @param baseURL         Chef api server address
-   * @param organization    Chef organization
-   * @param chefVersion     Chef API version
-   * @param pemPath         Oath of the pem key
+   * @param userId          User name correspond to the PEM key.
+   * @param baseURL         Chef API server address.
+   * @param organization    Chef organization.
+   * @param chefVersion     Chef API version.
+   * @param pemPath         Path of the PEM key.
    * @param successFunction The success function that is used for the dollar-sign methods.
    * @param errorConsumer   The error consumer that is used for the dollar-sign methods.
    */
@@ -215,6 +215,7 @@ public class ChefClient {
               .urlSegment("nodes")
               .urlSegment(name)
               .bodyHandler(new JSONBodyHandler(node))
+              .successResponseHandler(new JSONResponseHandler<>(Node.class))
               .put());
   }
 
