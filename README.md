@@ -31,6 +31,11 @@ if (response.wasSuccessful()) {
 }
 ```
 
+## Downloading
+Released versions can be downloaded from the Savant Repository.
+ 
+ * http://savant.inversoft.org/com/inversoft/barista/
+ 
 ### Building
 **Note:** This project uses the Savant build tool. To compile using using Savant, follow these instructions:
 
