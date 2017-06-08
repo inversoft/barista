@@ -65,7 +65,7 @@ public class ChefClientTest {
 
   @BeforeMethod
   public void createClient() {
-    client = new ChefClient(System.getProperty("user.name"), url, organization, pemPath, this::handleSuccess, this::handleError);
+    client = new ChefClient(System.getProperty("user.name"), url, organization, pemPath);
   }
 
   @Test(enabled = false)
@@ -77,19 +77,11 @@ public class ChefClientTest {
 
   @Test(enabled = false)
   public void updateNode() throws Exception {
-    Node node = client.retrieveNode$("Passport-1-passport");
+    Node node = client.retrieveNode("Passport-1-passport").successResponse;
     node.normal.put("chef-client-test", System.currentTimeMillis());
 
     ClientResponse<Node, Void> response = client.updateNode("Passport-1-passport", node);
     assertEquals(response.status, 200);
     assertNotNull(response.successResponse);
-  }
-
-  private void handleError(ClientResponse<?, Void> response) {
-    fail("Got an error! Status code [" + response.status + "]. Exception [" + response.exception + "]. Error body [" + response.errorResponse + "]");
-  }
-
-  private Object handleSuccess(ClientResponse<?, Void> response) {
-    return response.successResponse;
   }
 }

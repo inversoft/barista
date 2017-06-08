@@ -13,7 +13,6 @@
  * either express or implied. See the License for the specific
  * language governing permissions and limitations under the License.
  */
-
 package com.inversoft.chef.client;
 
 import com.inversoft.chef.domain.Node;
@@ -46,13 +45,9 @@ import java.util.stream.IntStream;
 public class ChefClient {
   private final String baseURL;
 
-  private final Consumer<ClientResponse<?, Void>> errorConsumer;
-
   private final String organization;
 
   private final String privateKey;
-
-  private final Function<ClientResponse<?, Void>, ?> successFunction;
 
   private final String userId;
 
@@ -69,17 +64,12 @@ public class ChefClient {
    * @param baseURL         Chef API server address.
    * @param organization    Chef organization.
    * @param pemPath         Path of the PEM key.
-   * @param successFunction The success function that is used for the dollar-sign methods.
-   * @param errorConsumer   The error consumer that is used for the dollar-sign methods.
    */
-  public ChefClient(String userId, String baseURL, String organization, String pemPath,
-                    Function<ClientResponse<?, Void>, ?> successFunction, Consumer<ClientResponse<?, Void>> errorConsumer) {
+  public ChefClient(String userId, String baseURL, String organization, String pemPath) {
     this.userId = userId;
     this.baseURL = baseURL;
     this.organization = organization;
     this.privateKey = getPrivateKey(pemPath);
-    this.successFunction = successFunction;
-    this.errorConsumer = errorConsumer;
   }
 
   /**
@@ -90,18 +80,13 @@ public class ChefClient {
    * @param organization    Chef organization.
    * @param chefVersion     Chef API version.
    * @param pemPath         Path of the PEM key.
-   * @param successFunction The success function that is used for the dollar-sign methods.
-   * @param errorConsumer   The error consumer that is used for the dollar-sign methods.
    */
-  public ChefClient(String userId, String baseURL, String organization, String chefVersion, String pemPath,
-                    Function<ClientResponse<?, Void>, ?> successFunction, Consumer<ClientResponse<?, Void>> errorConsumer) {
+  public ChefClient(String userId, String baseURL, String organization, String chefVersion, String pemPath) {
     this.userId = userId;
     this.baseURL = baseURL;
     this.organization = organization;
     this.chefVersion = chefVersion;
     this.privateKey = getPrivateKey(pemPath);
-    this.successFunction = successFunction;
-    this.errorConsumer = errorConsumer;
   }
 
   /**
@@ -120,15 +105,6 @@ public class ChefClient {
   }
 
   /**
-   * Delete a Chef Client.
-   *
-   * @param name The name of the chef client to delete.
-   */
-  public void deleteClient$(String name) {
-    handleVoid(deleteClient(name));
-  }
-
-  /**
    * Delete a Chef Node.
    *
    * @param name The name of the chef node to delete.
@@ -141,15 +117,6 @@ public class ChefClient {
               .urlSegment("clients")
               .urlSegment(name)
               .delete());
-  }
-
-  /**
-   * Delete a Chef Node.
-   *
-   * @param name The name of the chef node to delete.
-   */
-  public void deleteNode$(String name) {
-    handleVoid(deleteNode(name));
   }
 
   /**
@@ -169,16 +136,6 @@ public class ChefClient {
   }
 
   /**
-   * Retrieve a Chef Node.
-   *
-   * @param name The name of the chef node to retrieve.
-   * @return The node.
-   */
-  public Node retrieveNode$(String name) {
-    return handle(retrieveNode(name));
-  }
-
-  /**
    * Retrieve all Chef Nodes in the organization.
    *
    * @return The client response that contains the status code, the response body and/or any exceptions that occurred.
@@ -190,15 +147,6 @@ public class ChefClient {
               .urlSegment("nodes")
               .successResponseHandler(new JSONResponseHandler<>(Nodes.class))
               .get());
-  }
-
-  /**
-   * Retrieve all Chef Nodes in the organization.
-   *
-   * @return The nodes.
-   */
-  public Nodes retrieveNodes$() {
-    return handle(retrieveNodes());
   }
 
   /**
@@ -219,40 +167,11 @@ public class ChefClient {
               .put());
   }
 
-  /**
-   * Update a Chef Node.
-   *
-   * @param name    The name of the chef node to updated.
-   * @param node The new node.
-   * @return The updated node.
-   */
-  public Node updateNode$(String name, Node node) {
-    return handle(updateNode(name, node));
-  }
-
   private String getPrivateKey(String pemPath) {
     try {
       return new String(Files.readAllBytes(Paths.get(pemPath)));
     } catch (IOException e) {
       throw new RuntimeException(e);
-    }
-  }
-
-  private <T> T handle(ClientResponse<T, Void> response) {
-    if (response.wasSuccessful() && successFunction != null) {
-      return (T) successFunction.apply(response);
-    } else if (!response.wasSuccessful() && errorConsumer != null) {
-      errorConsumer.accept(response);
-    }
-
-    return null;
-  }
-
-  private void handleVoid(ClientResponse<Void, Void> response) {
-    if (response.wasSuccessful() && successFunction != null) {
-      successFunction.apply(response);
-    } else if (!response.wasSuccessful() && errorConsumer != null) {
-      errorConsumer.accept(response);
     }
   }
 
