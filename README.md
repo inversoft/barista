@@ -48,7 +48,7 @@ Released versions can be downloaded from the Savant Repository.
 ### Building in Maven
 
 ```bash
-$ mvn compile
+$ mvn install
 ```
  mvn
 ### Building in Savant
