@@ -70,6 +70,12 @@ target(name: "jar", description: "JARs the project", dependsOn: ["compile"]) {
 target(name: "test", description: "Executes the projects tests", dependsOn: ["jar"]) {
 }
 
+target(name: "mvn-deploy", description: "Publish to MVN repo", dependsOn: ["clean", "compile"]) {
+  if (new ProcessBuilder('mvn', 'deploy', '-Prelease').inheritIO().start().waitFor() != 0) {
+    fail("deploy failed")
+  }
+}
+
 target(name: "int", description: "Releases a local integration build of the project", dependsOn: ["test"]) {
   dependency.integrate()
 }
