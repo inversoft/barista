@@ -31,12 +31,7 @@ if (response.wasSuccessful()) {
 }
 ```
 
-## Downloading
-Released versions can be downloaded from the Savant Repository.
- 
- * http://savant.inversoft.org/com/inversoft/barista/
- 
-# Download from Maven 
+### Download from Maven 
 ```xml
 <dependency>
   <groupId>com.inversoft</groupId>
@@ -50,7 +45,7 @@ Released versions can be downloaded from the Savant Repository.
 ```bash
 $ mvn install
 ```
- mvn
+
 ### Building in Savant
 **Note:** This project uses the Savant build tool. To compile using using Savant, follow these instructions:
 
@@ -67,5 +62,11 @@ Then, perform an integration build of the project by running:
 ```bash
 $ sb int
 ```
+
+### Downloading from Savant
+Released versions can be downloaded from the Savant Repository.
+ 
+ * http://savant.inversoft.org/com/inversoft/barista/
+ 
 
 For more information, checkout [savantbuild.org](http://savantbuild.org/).
