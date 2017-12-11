@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2016, Inversoft Inc., All Rights Reserved
+ * Copyright (c) 2016-2017, Inversoft Inc., All Rights Reserved
  */
 savantVersion = "1.0.0"
 
-restifyVersion = "3.0.4"
+restifyVersion = "3.1.5"
 
-project(group: "com.inversoft", name: "barista", version: "0.3.0", licenses: ["ApacheV2_0"]) {
+project(group: "com.inversoft", name: "barista", version: "0.4.0", licenses: ["ApacheV2_0"]) {
   workflow {
     standard()
   }
@@ -17,7 +17,7 @@ project(group: "com.inversoft", name: "barista", version: "0.3.0", licenses: ["A
   dependencies {
     group(name: "compile") {
       dependency(id: "com.inversoft:restify:${restifyVersion}")
-      dependency(id: "com.fasterxml.jackson.core:jackson-annotations:2.4.2")
+      dependency(id: "com.fasterxml.jackson.core:jackson-annotations:2.8.8")
     }
     group(name: "test-compile", export: false) {
       dependency(id: "org.testng:testng:6.8.7")

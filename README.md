@@ -36,7 +36,22 @@ Released versions can be downloaded from the Savant Repository.
  
  * http://savant.inversoft.org/com/inversoft/barista/
  
-### Building
+# Download from Maven 
+```xml
+<dependency>
+  <groupId>com.inversoft</groupId>
+  <artifactId>barista</artifactId>
+  <version>0.4.0</version>
+</dependency>
+```
+
+### Building in Maven
+
+```bash
+$ mvn compile
+```
+ mvn
+### Building in Savant
 **Note:** This project uses the Savant build tool. To compile using using Savant, follow these instructions:
 
 ```bash
