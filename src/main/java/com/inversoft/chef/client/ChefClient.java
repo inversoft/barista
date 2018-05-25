@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Inversoft Inc., All Rights Reserved
+ * Copyright (c) 2016-2018, Inversoft Inc., All Rights Reserved
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,7 +36,6 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.stream.IntStream;
 
 /**
@@ -60,10 +59,10 @@ public class ChefClient {
   /**
    * Construct a new ChefClient.
    *
-   * @param userId          User name correspond to the PEM key.
-   * @param baseURL         Chef API server address.
-   * @param organization    Chef organization.
-   * @param pemPath         Path of the PEM key.
+   * @param userId       User name correspond to the PEM key.
+   * @param baseURL      Chef API server address.
+   * @param organization Chef organization.
+   * @param pemPath      Path of the PEM key.
    */
   public ChefClient(String userId, String baseURL, String organization, String pemPath) {
     this.userId = userId;
@@ -75,11 +74,11 @@ public class ChefClient {
   /**
    * Construct a new ChefClient.
    *
-   * @param userId          User name correspond to the PEM key.
-   * @param baseURL         Chef API server address.
-   * @param organization    Chef organization.
-   * @param chefVersion     Chef API version.
-   * @param pemPath         Path of the PEM key.
+   * @param userId       User name correspond to the PEM key.
+   * @param baseURL      Chef API server address.
+   * @param organization Chef organization.
+   * @param chefVersion  Chef API version.
+   * @param pemPath      Path of the PEM key.
    */
   public ChefClient(String userId, String baseURL, String organization, String chefVersion, String pemPath) {
     this.userId = userId;
@@ -120,6 +119,32 @@ public class ChefClient {
   }
 
   /**
+   * Disabling SSL Validation is highly discouraged. If you are using a self signed certificate it is recommended
+   * that you add your certificate to the Java keystore instead of disabling validation.
+   * <p>
+   * If for testing purposes, or you want to live on the edge - then, by all means at your own risk disable
+   * SSL Validation, proceed.
+   *
+   * <p>Be aware that this will disable SSL validation for the entire VM.</p>
+   *
+   * @return this.
+   */
+  public ChefClient disableSSLValidation() {
+    SSLTools.disableSSLValidation();
+    return this;
+  }
+
+  /**
+   * Enable the SSL validation if it has been previously disabled.
+   *
+   * @return this.
+   */
+  public ChefClient enableSSLValidation() {
+    SSLTools.enableSSLValidation();
+    return this;
+  }
+
+  /**
    * Retrieve a Chef Node.
    *
    * @param name The name of the chef node to retrieve.
@@ -152,7 +177,7 @@ public class ChefClient {
   /**
    * Update a Chef Node.
    *
-   * @param name    The name of the chef node to updated.
+   * @param name The name of the chef node to updated.
    * @param node TThe new node.
    * @return The client response that contains the status code, the response body and/or any exceptions that occurred.
    */

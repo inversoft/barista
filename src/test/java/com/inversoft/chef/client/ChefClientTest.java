@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Inversoft Inc., All Rights Reserved
+ * Copyright (c) 2016-2018, Inversoft Inc., All Rights Reserved
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,9 @@ package com.inversoft.chef.client;
 
 import com.inversoft.chef.domain.Node;
 import com.inversoft.chef.domain.Nodes;
+import com.inversoft.net.ssl.SSLTools;
 import com.inversoft.rest.ClientResponse;
+import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
@@ -26,6 +28,7 @@ import org.testng.annotations.Test;
 import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Properties;
 
@@ -43,9 +46,14 @@ public class ChefClientTest {
 
   private ChefClient client;
 
+  @AfterSuite
+  public static void afterSuite() {
+    SSLTools.enableSSLValidation();
+  }
+
   @BeforeSuite
   public static void loadConfig() throws IOException {
-    try (Reader reader = Files.newBufferedReader(Paths.get("config.properties"))) {
+    try (Reader reader = Files.newBufferedReader(Paths.get("src/test/resources/config.properties"))) {
       Properties properties = new Properties();
       properties.load(reader);
       url = properties.getProperty("url");
@@ -57,9 +65,12 @@ public class ChefClientTest {
 
     pemPath = System.getProperty("user.home") + "/.chef/" + System.getProperty("user.name") + ".pem";
 
-    // Java keystore (trustStore) for SSL certs that need a chain to be validated
-    if (Files.isRegularFile(Paths.get("cacerts"))) {
-      System.setProperty("javax.net.ssl.trustStore", "cacerts");
+    // If you want to use a trust store - copy your cacerts file into /src/test/resources
+    Path trustStore = Paths.get("src/test/resources/cacerts");
+    if (Files.isRegularFile(trustStore)) {
+      System.setProperty("javax.net.ssl.trustStore", trustStore.toAbsolutePath().toString());
+    } else {
+      SSLTools.disableSSLValidation();
     }
   }
 
@@ -69,14 +80,19 @@ public class ChefClientTest {
   }
 
   @Test(enabled = false)
-  public void retrieve() throws Exception {
+  public void retrieve() {
     ClientResponse<Nodes, Void> response = client.retrieveNodes();
     assertEquals(response.status, 200);
     assertTrue(response.successResponse.size() > 0);
+
+    String nodeName = response.successResponse.keySet().iterator().next();
+    ClientResponse<Node, Void> nodeResponse = client.retrieveNode(nodeName);
+    assertEquals(nodeResponse.status, 200);
+    assertNotNull(nodeResponse.successResponse);
   }
 
   @Test(enabled = false)
-  public void updateNode() throws Exception {
+  public void updateNode() {
     Node node = client.retrieveNode("Passport-1-passport").successResponse;
     node.normal.put("chef-client-test", System.currentTimeMillis());
 
