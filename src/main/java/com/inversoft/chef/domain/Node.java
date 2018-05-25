@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Inversoft Inc., All Rights Reserved
+ * Copyright (c) 2016-2018, Inversoft Inc., All Rights Reserved
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
 
 package com.inversoft.chef.domain;
 
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -31,7 +33,7 @@ import java.util.Map;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Node {
-  public Map<String, Object> attributes = new LinkedHashMap<>();
+  public Map<String, Object> automatic = new LinkedHashMap<>();
 
   @JsonProperty("chef_environment")
   public String chefEnvironment;
@@ -39,6 +41,7 @@ public class Node {
   @JsonProperty("chef_type")
   public ChefType chefType;
 
+  @JsonProperty("default")
   public Map<String, Object> defaults = new LinkedHashMap<>();
 
   @JsonProperty("json_class")
@@ -48,7 +51,13 @@ public class Node {
 
   public Map<String, Object> normal = new LinkedHashMap<>();
 
-  public Map<String, Object> overrides = new LinkedHashMap<>();
+  /**
+   * Any other properties on the incoming JSON response from Chef not accounted for by name will end up here.
+   */
+  @JsonIgnore
+  public Map<String, Object> other = new LinkedHashMap<>();
+
+  public Map<String, Object> override = new LinkedHashMap<>();
 
   @JsonProperty("policy_group")
   public String policyGroup;
@@ -58,4 +67,11 @@ public class Node {
 
   @JsonProperty("run_list")
   public List<String> runList = new ArrayList<>();
+
+  @JsonAnySetter
+  public void setOtherAttribute(String key, Object value) {
+    if (value != null) {
+      other.put(key, value);
+    }
+  }
 }
