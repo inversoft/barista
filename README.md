@@ -20,10 +20,10 @@ ClientResponse<Void, Void> response = client.deleteNode("node-name");
 ClientResponse<Void, Void> response = client.deleteClient("client-name");
 
 // Retrieve All Nodes
-ClientResponse<Nodes, Void> response = client.getNodes();
+ClientResponse<Nodes, Void> response = client.retrieveNodes();
 
 // Retrieve a Node by Name, print the node name if successful, else print the status code.
-ClientResponse<Node, Void> response = client.getNode("fooBar");
+ClientResponse<Node, Void> response = client.retrieveNode("fooBar");
 if (response.wasSuccessful()) {
   System.out.println(response.successResponse.name); // --> fooBar
 } else {
