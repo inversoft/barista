@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2020, Inversoft Inc., All Rights Reserved
+ * Copyright (c) 2020, Inversoft Inc., All Rights Reserved
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,15 @@
 
 package com.inversoft.chef.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import java.util.HashMap;
+
 /**
+ * Chef Cookbooks
+ *
  * @author Daniel DeGroff
  */
-public enum ChefType {
-  node,
-  client
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class Cookbooks extends HashMap<String, Cookbook> {
 }

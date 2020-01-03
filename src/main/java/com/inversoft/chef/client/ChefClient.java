@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2018, Inversoft Inc., All Rights Reserved
+ * Copyright (c) 2016-2020, Inversoft Inc., All Rights Reserved
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,8 +15,7 @@
  */
 package com.inversoft.chef.client;
 
-import com.inversoft.chef.domain.Node;
-import com.inversoft.chef.domain.Nodes;
+import com.inversoft.chef.domain.*;
 import com.inversoft.net.ssl.SSLTools;
 import com.inversoft.rest.ClientResponse;
 import com.inversoft.rest.JSONBodyHandler;
@@ -98,7 +97,7 @@ public class ChefClient {
     return start(client ->
         client.urlSegment("organizations")
               .urlSegment(organization)
-              .urlSegment("nodes")
+              .urlSegment("clients")
               .urlSegment(name)
               .delete());
   }
@@ -113,7 +112,7 @@ public class ChefClient {
     return start(client ->
         client.urlSegment("organizations")
               .urlSegment(organization)
-              .urlSegment("clients")
+              .urlSegment("nodes")
               .urlSegment(name)
               .delete());
   }
@@ -145,9 +144,69 @@ public class ChefClient {
   }
 
   /**
+   * Retrieve a Chef Client.
+   *
+   * @param name The name of the Chef Client to retrieve.
+   * @return The client response that contains the status code, the response body and/or any exceptions that occurred.
+   */
+  public ClientResponse<Client, Void> retrieveClient(String name) {
+    return start(Client.class, client ->
+        client.urlSegment("organizations")
+              .urlSegment(organization)
+              .urlSegment("clients")
+              .urlSegment(name)
+              .successResponseHandler(new JSONResponseHandler<>(Client.class))
+              .get());
+  }
+
+  /**
+   * Retrieve all Chef Clients in the organization.
+   *
+   * @return The client response that contains the status code, the response body and/or any exceptions that occurred.
+   */
+  public ClientResponse<Clients, Void> retrieveClients() {
+    return start(Clients.class, client ->
+        client.urlSegment("organizations")
+              .urlSegment(organization)
+              .urlSegment("clients")
+              .successResponseHandler(new JSONResponseHandler<>(Clients.class))
+              .get());
+  }
+
+  /**
+   * Retrieve a Chef Cookbook.
+   *
+   * @param name The name of the Chef Cookbook to retrieve.
+   * @return The client response that contains the status code, the response body and/or any exceptions that occurred.
+   */
+  public ClientResponse<Cookbooks, Void> retrieveCookbook(String name) {
+    return start(Cookbooks.class, client ->
+        client.urlSegment("organizations")
+              .urlSegment(organization)
+              .urlSegment("cookbooks")
+              .urlSegment(name)
+              .successResponseHandler(new JSONResponseHandler<>(Cookbooks.class))
+              .get());
+  }
+
+  /**
+   * Retrieve all of the Chef Cookbooks in the organization.
+   *
+   * @return The client response that contains the status code, the response body and/or any exceptions that occurred.
+   */
+  public ClientResponse<Cookbooks, Void> retrieveCookbooks() {
+    return start(Cookbooks.class, client ->
+        client.urlSegment("organizations")
+              .urlSegment(organization)
+              .urlSegment("cookbooks")
+              .successResponseHandler(new JSONResponseHandler<>(Cookbooks.class))
+              .get());
+  }
+
+  /**
    * Retrieve a Chef Node.
    *
-   * @param name The name of the chef node to retrieve.
+   * @param name The name of the Chef Node to retrieve.
    * @return The client response that contains the status code, the response body and/or any exceptions that occurred.
    */
   public ClientResponse<Node, Void> retrieveNode(String name) {
@@ -175,10 +234,28 @@ public class ChefClient {
   }
 
   /**
+   * Update a Chef Client.
+   *
+   * @param name       The name of the Chef Client to updated.
+   * @param chefClient The new Client object.
+   * @return The client response that contains the status code, the response body and/or any exceptions that occurred.
+   */
+  public ClientResponse<Client, Void> updateClient(String name, Client chefClient) {
+    return start(Client.class, client ->
+        client.urlSegment("organizations")
+              .urlSegment(organization)
+              .urlSegment("nodes")
+              .urlSegment(name)
+              .bodyHandler(new JSONBodyHandler(chefClient))
+              .successResponseHandler(new JSONResponseHandler<>(Client.class))
+              .put());
+  }
+
+  /**
    * Update a Chef Node.
    *
-   * @param name The name of the chef node to updated.
-   * @param node TThe new node.
+   * @param name The name of the Chef Node to updated.
+   * @param node The new Node object.
    * @return The client response that contains the status code, the response body and/or any exceptions that occurred.
    */
   public ClientResponse<Node, Void> updateNode(String name, Node node) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2018, Inversoft Inc., All Rights Reserved
+ * Copyright (c) 2016-2020, Inversoft Inc., All Rights Reserved
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,7 @@
 
 package com.inversoft.chef.client;
 
-import com.inversoft.chef.domain.Node;
-import com.inversoft.chef.domain.Nodes;
+import com.inversoft.chef.domain.*;
 import com.inversoft.net.ssl.SSLTools;
 import com.inversoft.rest.ClientResponse;
 import org.testng.annotations.AfterSuite;
@@ -80,7 +79,31 @@ public class ChefClientTest {
   }
 
   @Test(enabled = false)
-  public void retrieve() {
+  public void retrieveClients() {
+    ClientResponse<Clients, Void> response = client.retrieveClients();
+    assertEquals(response.status, 200);
+    assertTrue(response.successResponse.size() > 0);
+
+    String clientName = response.successResponse.keySet().iterator().next();
+    ClientResponse<Client, Void> clientResponse = client.retrieveClient(clientName);
+    assertEquals(clientResponse.status, 200);
+    assertNotNull(clientResponse.successResponse);
+  }
+
+  @Test(enabled = false)
+  public void retrieveCookbooks() {
+    ClientResponse<Cookbooks, Void> response = client.retrieveCookbooks();
+    assertEquals(response.status, 200);
+    assertTrue(response.successResponse.size() > 0);
+
+    String cookbookName = response.successResponse.keySet().iterator().next();
+    ClientResponse<Cookbooks, Void> cookbookResponse = client.retrieveCookbook(cookbookName);
+    assertEquals(cookbookResponse.status, 200);
+    assertNotNull(cookbookResponse.successResponse);
+  }
+
+  @Test(enabled = false)
+  public void retrieveNodes() {
     ClientResponse<Nodes, Void> response = client.retrieveNodes();
     assertEquals(response.status, 200);
     assertTrue(response.successResponse.size() > 0);
