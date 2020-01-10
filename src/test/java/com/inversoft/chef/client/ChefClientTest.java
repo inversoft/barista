@@ -115,6 +115,13 @@ public class ChefClientTest {
   }
 
   @Test(enabled = false)
+  public void retrieveRecipes() {
+    ClientResponse<Recipes, Void> response = client.retrieveRecipes();
+    assertEquals(response.status, 200);
+    assertTrue(response.successResponse.size() > 0);
+  }
+
+  @Test(enabled = false)
   public void updateNode() {
     Node node = client.retrieveNode("Passport-1-passport").successResponse;
     node.normal.put("chef-client-test", System.currentTimeMillis());

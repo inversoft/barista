@@ -234,6 +234,21 @@ public class ChefClient {
   }
 
   /**
+   * Retrieve all Chef Recipes in the organization.
+   *
+   * @return The client response that contains the status code, the response body and/or any exceptions that occurred.
+   */
+  public ClientResponse<Recipes, Void> retrieveRecipes() {
+    return start(Recipes.class, client ->
+        client.urlSegment("organizations")
+              .urlSegment(organization)
+              .urlSegment("cookbooks")
+              .urlSegment("_recipes")
+              .successResponseHandler(new JSONResponseHandler<>(Recipes.class))
+              .get());
+  }
+
+  /**
    * Update a Chef Client.
    *
    * @param name       The name of the Chef Client to updated.
