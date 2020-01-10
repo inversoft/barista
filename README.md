@@ -36,7 +36,7 @@ if (response.wasSuccessful()) {
 <dependency>
   <groupId>com.inversoft</groupId>
   <artifactId>barista</artifactId>
-  <version>0.6.0</version>
+  <version>1.0.0</version>
 </dependency>
 ```
 
