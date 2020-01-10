@@ -6,7 +6,7 @@
 
   <groupId>com.inversoft</groupId>
   <artifactId>barista</artifactId>
-  <version>0.6.0</version>
+  <version>1.0.0</version>
   <packaging>jar</packaging>
 
   <name>Barista</name>
