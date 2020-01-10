@@ -1,7 +1,6 @@
 /*
  * Copyright (c) 2016-2020, Inversoft Inc., All Rights Reserved
  */
-savantVersion = "1.0.0"
 
 restifyVersion = "3.3.0"
 
@@ -32,11 +31,12 @@ project(group: "com.inversoft", name: "barista", version: "1.0.0", licenses: ["A
 /*
  * Define Plugins
  */
-dependency = loadPlugin(id: "org.savantbuild.plugin:dependency:${savantVersion}")
-idea = loadPlugin(id: "org.savantbuild.plugin:idea:${savantVersion}")
-java = loadPlugin(id: "org.savantbuild.plugin:java:${savantVersion}")
-javaTestNG = loadPlugin(id: "org.savantbuild.plugin:java-testng:${savantVersion}")
-release = loadPlugin(id: "org.savantbuild.plugin:release-git:${savantVersion}")
+dependency = loadPlugin(id: "org.savantbuild.plugin:dependency:1.0.2")
+file = loadPlugin(id: "org.savantbuild.plugin:file:1.0.2")
+idea = loadPlugin(id: "org.savantbuild.plugin:idea:1.0.1")
+java = loadPlugin(id: "org.savantbuild.plugin:java:1.0.2")
+javaTestNG = loadPlugin(id: "org.savantbuild.plugin:java-testng:1.0.2")
+release = loadPlugin(id: "org.savantbuild.plugin:release-git:1.0.0")
 
 /*
  * Plugin Settings
@@ -49,6 +49,7 @@ javaTestNG.settings.javaVersion = "1.8"
  */
 target(name: "clean", description: "Cleans out the build directory") {
   java.clean()
+  file.prune(dir: "target") // clean the mvn directory so we release properly
 }
 
 target(name: "test", description: "Executes the projects tests", dependsOn: ["jar"]) {
