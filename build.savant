@@ -4,8 +4,8 @@
 
 guavaVersion = "30.1.0-jre"
 guiceVersion = "5.0.1"
-jacksonVersion = "2.12.2"
-restifyVersion = "3.9.0-{integration}"
+jacksonVersion = "2.13.0"
+restifyVersion = "3.9.0"
 testngVersion = "7.3.0"
 
 project(group: "com.inversoft", name: "barista", version: "1.1.0", licenses: ["ApacheV2_0"]) {
