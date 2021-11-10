@@ -2,9 +2,13 @@
  * Copyright (c) 2016-2020, Inversoft Inc., All Rights Reserved
  */
 
-restifyVersion = "3.3.0"
+guavaVersion = "30.1.0-jre"
+guiceVersion = "5.0.1"
+jacksonVersion = "2.12.2"
+restifyVersion = "3.9.0-{integration}"
+testngVersion = "7.3.0"
 
-project(group: "com.inversoft", name: "barista", version: "1.0.0", licenses: ["ApacheV2_0"]) {
+project(group: "com.inversoft", name: "barista", version: "1.1.0", licenses: ["ApacheV2_0"]) {
   workflow {
     standard()
   }
@@ -16,10 +20,12 @@ project(group: "com.inversoft", name: "barista", version: "1.0.0", licenses: ["A
   dependencies {
     group(name: "compile") {
       dependency(id: "com.inversoft:restify:${restifyVersion}")
-      dependency(id: "com.fasterxml.jackson.core:jackson-annotations:2.10.1")
+      dependency(id: "com.fasterxml.jackson.core:jackson-annotations:${jacksonVersion}")
+      dependency(id: "com.google.guava:guava:${guavaVersion}", skipCompatibilityCheck: true)
+      dependency(id: "com.google.inject:guice:${guiceVersion}")
     }
     group(name: "test-compile", export: false) {
-      dependency(id: "org.testng:testng:6.8.7")
+      dependency(id: "org.testng:testng:${testngVersion}")
     }
   }
 
@@ -35,7 +41,7 @@ dependency = loadPlugin(id: "org.savantbuild.plugin:dependency:1.0.2")
 file = loadPlugin(id: "org.savantbuild.plugin:file:1.0.2")
 idea = loadPlugin(id: "org.savantbuild.plugin:idea:1.0.1")
 java = loadPlugin(id: "org.savantbuild.plugin:java:1.0.2")
-javaTestNG = loadPlugin(id: "org.savantbuild.plugin:java-testng:1.0.2")
+javaTestNG = loadPlugin(id: "org.savantbuild.plugin:java-testng:1.0.9")
 release = loadPlugin(id: "org.savantbuild.plugin:release-git:1.0.0")
 
 /*

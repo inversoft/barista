@@ -3,3 +3,4 @@ build
 config.properties
 cacerts
 target
+**/.DS_Store
